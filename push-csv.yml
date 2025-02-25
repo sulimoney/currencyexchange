@@ -1,0 +1,33 @@
+name: Auto-Push CSV Files
+
+on:
+  schedule:
+    - cron: "0 12 * * *"  # Runs every day at 12:00 PM UTC
+
+jobs:
+  update-csv:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: pip install pandas beautifulsoup4 requests lxml
+
+      - name: Run Scraper
+        run: python scrapper.py
+
+      - name: Commit and Push CSV
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add exchange_rates/*.csv
+          git commit -m "Auto-update exchange rates CSV"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
