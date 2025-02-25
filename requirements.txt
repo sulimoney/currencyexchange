@@ -5,3 +5,4 @@ lxml
 flask
 gunicorn
 waitress
+plotly
